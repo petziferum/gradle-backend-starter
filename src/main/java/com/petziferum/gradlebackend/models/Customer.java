@@ -1,6 +1,5 @@
 package com.petziferum.gradlebackend.models;
 
-import com.fasterxml.jackson.annotation.JsonTypeId;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

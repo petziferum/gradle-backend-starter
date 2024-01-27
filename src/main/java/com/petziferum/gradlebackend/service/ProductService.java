@@ -3,10 +3,8 @@ package com.petziferum.gradlebackend.service;
 import com.petziferum.gradlebackend.models.Product;
 import com.petziferum.gradlebackend.models.ProductRequest;
 import com.petziferum.gradlebackend.models.ProductResponse;
-import com.petziferum.gradlebackend.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
