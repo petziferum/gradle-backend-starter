@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  gradlebackendapplication:
+    build: .
+    image: gradlebackendapplication:latest
+    network_mode: host
+    ports:
+      - "8080:8080"

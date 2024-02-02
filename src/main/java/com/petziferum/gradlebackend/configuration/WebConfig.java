@@ -13,11 +13,10 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")  // Apply to all endpoints
-                        .allowedOriginPatterns("http://localhost:[5-6][0-9][0-9][0-9]")  // Pattern to allow localhost with ports 5000 to 6999
-                        .allowedOrigins("http://localhost:5173")  // Allow localhost:8080
+                        //.allowedOriginPatterns("http://localhost:[5-6][0-9][0-9][0-9]", "http://localhost:5173")  // Pattern to allow localhost with ports 5000 to 6999
+                        .allowedOrigins("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(true)
                         .maxAge(3600);  // 1 hour
             }
         };
