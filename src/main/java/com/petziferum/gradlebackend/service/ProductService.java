@@ -24,7 +24,7 @@ public class ProductService {
                 .tags(productRequest.getTags())
                 .categories(productRequest.getCategories())
                 .build();
-        log.info("Product saved {}", product.getId());
+        log.info("Product created {}", product.getId());
         return product;
     }
 

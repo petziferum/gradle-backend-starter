@@ -1,6 +1,7 @@
 package com.petziferum.gradlebackend.controller;
 
 
+import com.petziferum.gradlebackend.models.Customer;
 import com.petziferum.gradlebackend.models.Product;
 import com.petziferum.gradlebackend.models.ProductRequest;
 import com.petziferum.gradlebackend.models.ProductResponse;
@@ -46,12 +47,29 @@ public class ProductController {
 
     @Operation(summary = "Get all products", description = "Get all products")
     @GetMapping("all")
-    public ResponseEntity<List<Product>> getCustomer() {
+    public ResponseEntity<List<Product>> getProduct() {
         List<Product> productList = productRepo.findAll();
         if(productList.isEmpty()) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.ok(productList);
         }
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable String id, @RequestBody Product updatedProduct) {
+        return productRepo.findById(id)
+                .map(product -> {
+                    product.setName(updatedProduct.getName());
+                    product.setDescription(updatedProduct.getDescription());
+                    product.setPrice(updatedProduct.getPrice());
+                    product.setOwner(updatedProduct.getOwner());
+
+                    Product savedProduct = productRepo.save(product);
+                    return ResponseEntity.ok(savedProduct);
+                })
+                .orElseGet(() -> {
+                    return ResponseEntity.notFound().build();
+                });
     }
 }

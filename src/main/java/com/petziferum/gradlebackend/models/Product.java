@@ -24,6 +24,10 @@ public class Product {
     private String description;
     private Integer price;
 
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer owner;
+
     @ElementCollection
     @CollectionTable(name = "product_tags")
     private List<String> tags;

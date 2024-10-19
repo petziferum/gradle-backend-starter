@@ -18,4 +18,5 @@ public class ProductRequest {
     private Integer price;
     private List<String> tags;
     private List<String> categories;
+    private String owner;
 }
