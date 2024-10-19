@@ -1,16 +1,13 @@
 package com.petziferum.gradlebackend.controller;
 
 
-import com.petziferum.gradlebackend.models.Customer;
 import com.petziferum.gradlebackend.models.Product;
 import com.petziferum.gradlebackend.models.ProductRequest;
-import com.petziferum.gradlebackend.models.ProductResponse;
 import com.petziferum.gradlebackend.repository.ProductRepository;
 import com.petziferum.gradlebackend.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.Store;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
