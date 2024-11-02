@@ -4,6 +4,7 @@ spring:
     url: jdbc:postgresql://192.168.178.81:5432/database
     username: admin
     password: password
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -11,3 +12,4 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect

@@ -6,21 +6,29 @@ import com.petziferum.gradlebackend.models.ProductRequest;
 import com.petziferum.gradlebackend.repository.ProductRepository;
 import com.petziferum.gradlebackend.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;;
+import java.util.Map;
 
 @Slf4j
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/products")
-public class ProductController {
+public class ProductController implements ProductControllerAnnotations {
 
 
     private final ProductService productService;
@@ -42,14 +50,24 @@ public class ProductController {
         }
     }
 
-    @Operation(summary = "Get all products", description = "Get all products")
-    @GetMapping("all")
-    public ResponseEntity<List<Product>> getProduct() {
-        List<Product> productList = productRepo.findAll();
-        if(productList.isEmpty()) {
-            return ResponseEntity.noContent().build();
+    public ResponseEntity<Map<String, Object>> getAllProducts(int page, int size) {
+        Pageable paging = PageRequest.of(page, size);
+        Page<Product> pagedProducts = productRepo.findAll(paging);
+        Map<String, Object> response = new HashMap<>();
+
+        if (pagedProducts.isEmpty()) {
+            response.put("status", "Leer");
+            response.put("message", "Das Produktlager ist komplett leer!");
+            response.put("content", Collections.emptyList());
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.ok(productList);
+            response.put("status", "Erfolg");
+            response.put("message", "Produkte werden ausgegeben.");
+            response.put("currentPage", pagedProducts.getNumber());
+            response.put("totalItems", pagedProducts.getTotalElements());
+            response.put("totalPages", pagedProducts.getTotalPages());
+            response.put("content", pagedProducts.getContent());
+            return ResponseEntity.ok(response);
         }
     }
 
