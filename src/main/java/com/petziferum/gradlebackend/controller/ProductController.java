@@ -12,16 +12,19 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.HashMap;;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -43,7 +46,10 @@ public class ProductController implements ProductControllerAnnotations {
         try {
             Product p = productService.createProduct(product);
             Product savedProduct = productRepo.save(p);
-            return ResponseEntity.ok(savedProduct);
+            Optional<Product> newProduct = productRepo.findById(savedProduct.getId());
+            if(newProduct.isPresent()) {
+                return ResponseEntity.ok(savedProduct);
+            } else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             log.error("Error saving product {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

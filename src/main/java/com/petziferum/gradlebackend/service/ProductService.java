@@ -1,10 +1,13 @@
 package com.petziferum.gradlebackend.service;
 
+import com.petziferum.gradlebackend.models.Customer;
 import com.petziferum.gradlebackend.models.Product;
 import com.petziferum.gradlebackend.models.ProductRequest;
 import com.petziferum.gradlebackend.models.ProductResponse;
+import com.petziferum.gradlebackend.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,13 +20,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductService {
 
+    @Autowired
+    CustomerRepository customerRepo;
+
     public Product createProduct(ProductRequest productRequest) {
+        Customer owner = null;
+        if(productRequest.getOwner() != null) {
+            owner = customerRepo.findById(productRequest.getOwner())
+                    .orElse(null);
+        }
         Product product = Product.builder()
                 .name(productRequest.getName())
                 .description(productRequest.getDescription())
                 .price(productRequest.getPrice())
                 .tags(productRequest.getTags())
                 .categories(productRequest.getCategories())
+                .owner(owner)
                 .build();
         log.info("Product created {}", product.getId());
         return product;

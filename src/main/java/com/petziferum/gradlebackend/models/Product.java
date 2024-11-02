@@ -25,7 +25,7 @@ public class Product {
     private Integer price;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name = "owner", referencedColumnName = "id")
     private Customer owner;
 
     @ElementCollection
