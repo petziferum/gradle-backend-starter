@@ -5,9 +5,11 @@ import com.petziferum.gradlebackend.models.Product;
 import com.petziferum.gradlebackend.models.ProductRequest;
 import com.petziferum.gradlebackend.models.ProductResponse;
 import com.petziferum.gradlebackend.repository.CustomerRepository;
+import com.petziferum.gradlebackend.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,16 +19,20 @@ import java.util.List;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class ProductService {
 
-    @Autowired
-    CustomerRepository customerRepo;
+    private final CustomerRepository customerRepository;
+    private final ProductRepository productRepository;
+
+    public ProductService(CustomerRepository customerRepo, ProductRepository productRepository) {
+        this.customerRepository = customerRepo;
+        this.productRepository = productRepository;
+    }
 
     public Product createProduct(ProductRequest productRequest) {
         Customer owner = null;
         if(productRequest.getOwner() != null) {
-            owner = customerRepo.findById(productRequest.getOwner())
+            owner = customerRepository.findById(productRequest.getOwner())
                     .orElse(null);
         }
         Product product = Product.builder()
@@ -37,8 +43,9 @@ public class ProductService {
                 .categories(productRequest.getCategories())
                 .owner(owner)
                 .build();
+        Product p = productRepository.save(product);
         log.info("Product created {}", product.getId());
-        return product;
+        return p;
     }
 
     public List<ProductResponse> getAllProducts() {
