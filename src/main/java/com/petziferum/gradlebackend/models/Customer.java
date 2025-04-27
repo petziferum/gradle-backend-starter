@@ -24,4 +24,8 @@ public class Customer {
     String lastName;
     String email;
     String description;
+    String haarfarbe;
+    String augenfarbe;
+    Integer gewicht;
+    Integer groesse;
 }

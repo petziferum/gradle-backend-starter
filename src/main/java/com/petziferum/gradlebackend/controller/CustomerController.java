@@ -37,6 +37,10 @@ public class CustomerController {
                     customer.setLastName(updatedCustomer.getLastName());
                     customer.setEmail(updatedCustomer.getEmail());
                     customer.setDescription(updatedCustomer.getDescription());
+                    customer.setHaarfarbe(updatedCustomer.getHaarfarbe());
+                    customer.setAugenfarbe(updatedCustomer.getAugenfarbe());
+                    customer.setGewicht(updatedCustomer.getGewicht());
+                    customer.setGroesse(updatedCustomer.getGroesse());
 
                     Customer savedCustomer = customerRepository.save(customer);
                     return ResponseEntity.ok(savedCustomer);
