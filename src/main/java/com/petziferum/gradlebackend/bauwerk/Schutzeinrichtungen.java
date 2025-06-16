@@ -1,0 +1,32 @@
+package com.petziferum.gradlebackend.bauwerk;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(name = "bauwerk_schutzeinrichtungen")
+public class Schutzeinrichtungen {
+
+    @Id
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    String id;
+
+    String name;
+
+    String bemerkung;
+
+    @Column(name = "material")
+    @ToString.Exclude
+    @Convert(converter = MaterialListConverter.class)
+    private List<Materialart> material = new ArrayList<>();
+}
