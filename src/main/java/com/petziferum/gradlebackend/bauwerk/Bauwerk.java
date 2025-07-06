@@ -33,5 +33,6 @@ public class Bauwerk {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "bauwerkid")
+    @Builder.Default
     List<Schutzeinrichtungen> schutzeinrichtungen = new ArrayList<Schutzeinrichtungen>();
 }

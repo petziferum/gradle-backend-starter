@@ -28,5 +28,6 @@ public class Schutzeinrichtungen {
     @Column(name = "material")
     @ToString.Exclude
     @Convert(converter = MaterialListConverter.class)
+    @Builder.Default
     private List<Materialart> material = new ArrayList<>();
 }

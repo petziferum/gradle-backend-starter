@@ -31,7 +31,7 @@ public class WeatherController {
      */
     @GetMapping("/")
     @Operation(
-            summary = "Get weather data for the default location",
+            summary = "Get weather data for the default location Trudering Riem",
             description = "Fetches current weather data from an external API for the default location",
             responses = {
                     @ApiResponse(
