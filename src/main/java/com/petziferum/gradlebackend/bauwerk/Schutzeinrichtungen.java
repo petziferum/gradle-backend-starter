@@ -1,6 +1,5 @@
 package com.petziferum.gradlebackend.bauwerk;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
