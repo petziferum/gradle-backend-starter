@@ -24,16 +24,14 @@ spring:
 weather:
   api:
     url: https://api.openweathermap.org/data/2.5/weather
-    key: your_api_key_here  # Replace with your actual API key in production
+    key: bc434c2a45290f97cb9d123eb8b45879
   default:
-    location: Berlin
-eureka:
-  instance:
-    hostname: localhost
-  client:
-    register-with-eureka: false
-    fetch-registry: true
-    service-url:
-      defaultZone: http://${eureka.instance.hostname}:8761/eureka/
+    location: Trudering
 server:
   port: 8060
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.petziferum.gradlebackend: DEBUG

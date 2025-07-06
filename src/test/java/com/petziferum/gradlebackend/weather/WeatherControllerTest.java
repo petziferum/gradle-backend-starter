@@ -1,5 +1,6 @@
 package com.petziferum.gradlebackend.weather;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Slf4j
 class WeatherControllerTest {
 
     @Mock
@@ -23,8 +25,9 @@ class WeatherControllerTest {
 
     @BeforeEach
     void setUp() {
+        log.info("Setting up test data");
         MockitoAnnotations.openMocks(this);
-        
+
         mockWeather = Weather.builder()
                 .location("Berlin")
                 .temperature(22.5)
@@ -35,6 +38,7 @@ class WeatherControllerTest {
                 .pressure(1013.0)
                 .lastUpdated("2023-06-15T10:30:00")
                 .build();
+        log.debug("Created mock weather object: {}", mockWeather);
     }
 
     @Test
@@ -50,7 +54,7 @@ class WeatherControllerTest {
         assertNotNull(response.getBody());
         assertEquals("Berlin", response.getBody().getLocation());
         assertEquals(22.5, response.getBody().getTemperature());
-        
+
         verify(weatherService, times(1)).getWeatherData();
     }
 
@@ -68,7 +72,7 @@ class WeatherControllerTest {
                 .pressure(1015.0)
                 .lastUpdated("2023-06-15T10:30:00")
                 .build();
-        
+
         when(weatherService.getWeatherData(location)).thenReturn(munichWeather);
 
         // Act
@@ -79,7 +83,7 @@ class WeatherControllerTest {
         assertNotNull(response.getBody());
         assertEquals(location, response.getBody().getLocation());
         assertEquals(20.0, response.getBody().getTemperature());
-        
+
         verify(weatherService, times(1)).getWeatherData(location);
     }
 
@@ -94,7 +98,7 @@ class WeatherControllerTest {
         // Assert
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertNull(response.getBody());
-        
+
         verify(weatherService, times(1)).getWeatherData();
     }
 }

@@ -3,27 +3,31 @@ package com.petziferum.gradlebackend.weather;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
- * Service for fetching weather data from an external API.
+ * Service for fetching weather data from the OpenWeather API.
  */
 @Service
 @Slf4j
 public class WeatherService {
 
     private final RestTemplate restTemplate;
-    
+
     @Value("${weather.api.url:https://api.openweathermap.org/data/2.5/weather}")
     private String weatherApiUrl;
-    
+
     @Value("${weather.api.key:}")
     private String apiKey;
-    
-    @Value("${weather.default.location:Berlin}")
+
+    @Value("${weather.default.location:München-Trudering}")
     private String defaultLocation;
 
     public WeatherService() {
@@ -47,26 +51,35 @@ public class WeatherService {
      */
     public Weather getWeatherData(String location) {
         log.info("Fetching weather data for location: {}", location);
-        
+
         try {
-            // In a real implementation, this would call the external API
-            // String url = weatherApiUrl + "?q=" + location + "&appid=" + apiKey + "&units=metric";
-            // WeatherApiResponse response = restTemplate.getForObject(url, WeatherApiResponse.class);
-            
-            // For now, we'll return mock data
-            return Weather.builder()
-                    .location(location)
-                    .temperature(22.5)
-                    .description("Partly cloudy")
-                    .humidity(65.0)
-                    .windSpeed(5.2)
-                    .windDirection("NE")
-                    .pressure(1013.0)
-                    .lastUpdated(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-                    .build();
+            // Build the URL with query parameters
+            String encodedLocation = URLEncoder.encode(location, StandardCharsets.UTF_8);
+            String url = UriComponentsBuilder.fromUriString(weatherApiUrl)
+                    .queryParam("q", encodedLocation)
+                    .queryParam("appid", apiKey)
+                    .queryParam("units", "metric")  // Use metric units for temperature in Celsius
+                    .build()
+                    .toUriString();
+
+            log.debug("Calling OpenWeather API with URL: {}", url.replace(apiKey, "API_KEY_HIDDEN"));
+
+            // Make the API call
+            OpenWeatherResponse response = restTemplate.getForObject(url, OpenWeatherResponse.class);
+
+            if (response == null) {
+                throw new RuntimeException("Received null response from OpenWeather API");
+            }
+
+            // Convert the API response to our Weather model
+            return response.toWeather(location);
+
+        } catch (RestClientException e) {
+            log.error("Error calling OpenWeather API: {}", e.getMessage());
+            throw new RuntimeException("Failed to fetch weather data from OpenWeather API", e);
         } catch (Exception e) {
-            log.error("Error fetching weather data: {}", e.getMessage());
-            throw new RuntimeException("Failed to fetch weather data", e);
+            log.error("Error processing weather data: {}", e.getMessage());
+            throw new RuntimeException("Failed to process weather data", e);
         }
     }
 }

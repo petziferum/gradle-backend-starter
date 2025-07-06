@@ -1,12 +1,12 @@
 package com.petziferum.gradlebackend.bauwerk;
 
-import jakarta.ws.rs.NotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.NotActiveException;
 import java.util.List;
@@ -27,7 +27,8 @@ public class BauwerkController {
 
     @PutMapping("/update")
     public ResponseEntity<Bauwerk> updateBauwerk(@RequestBody Bauwerk bauwerk) {
-        Bauwerk dbBauwerk = bwrepo.findById(bauwerk.getId()).orElseThrow(NotFoundException::new);
+        Bauwerk dbBauwerk = bwrepo.findById(bauwerk.getId())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bauwerk not found with id: " + bauwerk.getId()));
         dbBauwerk.setName(bauwerk.getName());
         dbBauwerk.setBeschreibung(bauwerk.getBeschreibung());
 
