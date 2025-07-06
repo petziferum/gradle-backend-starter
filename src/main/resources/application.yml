@@ -19,6 +19,14 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+# Weather API Configuration
+weather:
+  api:
+    url: https://api.openweathermap.org/data/2.5/weather
+    key: your_api_key_here  # Replace with your actual API key in production
+  default:
+    location: Berlin
 eureka:
   instance:
     hostname: localhost
