@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.NotActiveException;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -17,33 +18,45 @@ import java.util.List;
 @RequestMapping("/bauwerk")
 public class BauwerkController {
 
-    private BauwerkRepository bwrepo;
+    private BauwerkRepository bauwerkRepository;
 
     @PostMapping("/save")
     public ResponseEntity<Bauwerk> saveBauwerk(Bauwerk bauwerk) {
-        Bauwerk savedBw = bwrepo.save(bauwerk);
+        Bauwerk savedBw = bauwerkRepository.save(bauwerk);
         return new ResponseEntity<>(savedBw, HttpStatus.OK);
     }
 
     @PutMapping("/update")
     public ResponseEntity<Bauwerk> updateBauwerk(@RequestBody Bauwerk bauwerk) {
-        Bauwerk dbBauwerk = bwrepo.findById(bauwerk.getId())
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bauwerk not found with id: " + bauwerk.getId()));
+        final String BAUWERK_NOT_FOUND = "Bauwerk nicht gefunden mit id: %s";
+
+        Bauwerk dbBauwerk = bauwerkRepository.findById(bauwerk.getId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        String.format(BAUWERK_NOT_FOUND, bauwerk.getId())
+                ));
+        updateBauwerkFields(dbBauwerk, bauwerk);
+        updateSchutzeinrichtungen(dbBauwerk, bauwerk);
+
+        return ResponseEntity.ok(bauwerkRepository.save(dbBauwerk));
+    }
+
+    private void updateBauwerkFields(Bauwerk dbBauwerk, Bauwerk bauwerk) {
         dbBauwerk.setName(bauwerk.getName());
         dbBauwerk.setBeschreibung(bauwerk.getBeschreibung());
+    }
 
+    private void updateSchutzeinrichtungen(Bauwerk dbBauwerk, Bauwerk bauwerk) {
         dbBauwerk.getSchutzeinrichtungen().clear();
-        if (bauwerk.getSchutzeinrichtungen() != null) {
-            dbBauwerk.getSchutzeinrichtungen().addAll(bauwerk.getSchutzeinrichtungen());
-        }
-
-        Bauwerk savedBw = bwrepo.save(dbBauwerk);
-        return new ResponseEntity<>(savedBw, HttpStatus.OK);
+        Optional.ofNullable(bauwerk.getSchutzeinrichtungen())
+                .ifPresent(schutzeinrichtungen ->
+                        dbBauwerk.getSchutzeinrichtungen().addAll(schutzeinrichtungen));
     }
 
     @GetMapping()
     public ResponseEntity<List<Bauwerk>> getAllBauwerk() {
-        List<Bauwerk> allBauwerke = bwrepo.findAll();
+        List<Bauwerk> allBauwerke = bauwerkRepository.findAll();
         return new ResponseEntity<>(allBauwerke, HttpStatus.OK);
     }
 }
+
